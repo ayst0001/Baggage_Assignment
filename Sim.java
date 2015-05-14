@@ -15,18 +15,21 @@ public class Sim {
         BeltMover mover = new BeltMover(belt);
         Sensor sensor = new Sensor(belt);
         Robot robot = new Robot(belt);
+        Scanner scanner = new Scanner(belt);
 
         consumer.start();
         producer.start();
         mover.start();
         sensor.start();
         robot.start();
+        scanner.start();
 
         while (consumer.isAlive() && 
                producer.isAlive() && 
                mover.isAlive() &&
                sensor.isAlive() &&
-               robot.isAlive())
+               robot.isAlive() &&
+               scanner.isAlive())
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
@@ -39,6 +42,7 @@ public class Sim {
         mover.interrupt();
         sensor.interrupt();
         robot.interrupt();
+        scanner.interrupt();
 
         System.out.println("Sim terminating");
         System.out.println(BaggageHandlingThread.getTerminateException());

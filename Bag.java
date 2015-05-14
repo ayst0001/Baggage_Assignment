@@ -15,6 +15,9 @@ public class Bag {
     // specify whether the bag is ready to be grabbed to be scanned
     protected boolean ready_out = false;
 
+    // specify whether the bag is ready to be grabbed back to the main belt
+    protected boolean ready_back = false;
+    
     // the ID of this bag
     protected int id;
 
@@ -97,4 +100,20 @@ public class Bag {
 	public boolean ready_out() {
 		return ready_out;
 	}
+
+	public boolean not_ready_back() {
+		if (ready_back == true){
+			return false;
+		}
+		else return true;
+	}
+
+	public boolean ready_back() {
+		if(ready_back){
+			return true;
+		}
+		else return false;
+	}
+	
+	
 }
