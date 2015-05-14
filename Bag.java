@@ -11,6 +11,9 @@ public class Bag {
 
     // specifies whether the bag is clean
     protected boolean clean = true;
+    
+    // specify whether the bag is ready to be grabbed to be scanned
+    protected boolean ready_out = false;
 
     // the ID of this bag
     protected int id;
@@ -68,8 +71,30 @@ public class Bag {
     public boolean isClean() {
         return clean;
     }
+    
+    /**
+     * mark "ready to be grabed out" if identified by the sensor
+     */
+    public void set_ready_out(){
+    	ready_out = true;
+    	System.out.println("bag " + this.id + " is ready to be grabed out");
+    }
 
     public String toString() {
         return "Bag(" + id + ")";
     }
+
+    /**
+     * return true when ready_out is false
+     */
+	public boolean not_ready_out() {
+		if (ready_out == false){
+			return true;
+		}
+		else return false;
+	}
+
+	public boolean ready_out() {
+		return ready_out;
+	}
 }

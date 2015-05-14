@@ -129,6 +129,7 @@ public class Belt {
     /*
      * Check the segment 3 if the bag there is suspicious
      */
+    
     public synchronized Bag sense() throws InterruptedException {
     	//When segment 3 is empty or the bag there is clean, wait
     	while (segment[2] == null ||
@@ -140,11 +141,34 @@ public class Belt {
     	//and bag on segment 3 is suspicious
     	if (segment[2] != null && segment[2].isSuspicious()){
     		System.out.println("bag "+ segment[2].getId()
-    				+ " on segment 3 is suspicious");
+    				+ " on segment 3 is suspicious, "
+    				+ "waiting to be moved");
+    		segment[2].set_ready_out();
     	}
-    	
     	return segment[2];
     }
+    
+    /*
+     * Robot grabs and moves suspicious bag out off segment[2]
+     */
+    
+    public synchronized Bag grab() throws InterruptedException {
+    	//When segment 3 is empty or the bag there is not ready to be moved
+    	while (segment[2] == null ||
+    			(segment[2]!=null && segment[2].not_ready_out())){
+    		wait();
+    	}
+    	
+    	//Double check, when segment 3 is not empty
+    	//and bag on segment 3 is ready to be moved
+    	if (segment[2] != null && segment[2].ready_out()){
+    		System.out.println("Grabing out suspicious bag");
+    		segment[2] = null;
+    		System.out.println("bag on segment 3 is moved to scanner");
+    	}
+    	return segment[2];
+    }
+    
     
     
     /**
