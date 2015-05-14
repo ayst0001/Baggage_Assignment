@@ -15,10 +15,11 @@ public class Belt {
     // the belt type (for including in exception messages)
     // protected String type;
 
+    //indentation for output layout
     final private static String indentation = "                 ";
 
     /**
-     * Create a new, empty belt, initialised as empty
+     * Create a new, empty belt, initialized as empty
      */
     public Belt(Animation a) {
         segment = new Bag[beltLength];
@@ -101,9 +102,10 @@ public class Belt {
      */
     public synchronized void move() 
             throws InterruptedException, OverloadException {
-        // if there is something at the end of the belt, or the belt is empty,
+    	// if there is something at the end of the belt, or the belt is empty,
         // or something needs to be picked up for a scan, do not move the belt
-        while (isEmpty() || segment[segment.length-1] != null) {
+        while (isEmpty() || segment[segment.length-1] != null ||
+        		(segment[2] != null && segment[2].isSuspicious()) ) {
             wait();
         }
 
@@ -124,6 +126,27 @@ public class Belt {
         notifyAll();
     }
 
+    /*
+     * Check the segment 3 if the bag there is suspicious
+     */
+    public synchronized Bag sense() throws InterruptedException {
+    	//When segment 3 is empty or the bag there is clean, wait
+    	while (segment[2] == null ||
+    			(segment[2]!=null && segment[2].isClean())){
+    		wait();
+    	}
+    	
+    	//Double check, when segment 3 is not empty
+    	//and bag on segment 3 is suspicious
+    	if (segment[2] != null && segment[2].isSuspicious()){
+    		System.out.println("bag "+ segment[2].getId()
+    				+ " on segment 3 is suspicious");
+    	}
+    	
+    	return segment[2];
+    }
+    
+    
     /**
      * @return the maximum size of this belt
      */
