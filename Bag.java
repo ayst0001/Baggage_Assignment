@@ -52,6 +52,11 @@ public class Bag {
      */
     public void clean() {
         clean = true;
+        suspicious = false;
+        // prevent the bag to be scanned again
+        set_not_ready_out();
+        // specify the bag is checked and clean
+        set_ready_back();
     }
 
     /**
@@ -74,22 +79,13 @@ public class Bag {
     public boolean isClean() {
         return clean;
     }
-    
-    /**
-     * mark "ready to be grabed out" if identified by the sensor
-     */
-    public void set_ready_out(){
-    	ready_out = true;
-    	System.out.println("bag " + this.id + " is ready to be grabed out");
-    }
 
     public String toString() {
         return "Bag(" + id + ")";
     }
 
-    /**
-     * return true when ready_out is false
-     */
+    // return true when ready_out is false
+    // indicates the bag in segment 3 is not ready to be grabbed out
 	public boolean not_ready_out() {
 		if (ready_out == false){
 			return true;
@@ -97,23 +93,42 @@ public class Bag {
 		else return false;
 	}
 
-	public boolean ready_out() {
+	//return true when ready_out is true
+	public boolean is_ready_out() {
 		return ready_out;
 	}
 
+	// return true when ready_back is false
+	// indicates the bag in scanner is not ready to be grabbed back
 	public boolean not_ready_back() {
-		if (ready_back == true){
-			return false;
-		}
-		else return true;
-	}
-
-	public boolean ready_back() {
-		if(ready_back){
+		if (ready_back == false){
 			return true;
 		}
 		else return false;
 	}
+
+	// check if bag at the scanner is ready to be grabbed back
+	public boolean is_ready_back() {
+		return ready_back;
+	}
+
+	// specify the bag is checked and clean
+	// and ready to be moved back
+	public void set_ready_back() {
+    	ready_back = true;
+    	System.out.println("bag " + this.id + " is ready to be grabed back");
+	}
+
+	// specify the bag should not be moved by the robot
+	// even it is at segment 3
+	public void set_not_ready_out() {
+		ready_out = false;	
+	}
 	
+	// set the bag as "ready out" when it is detected by the sensor
+    public void set_ready_out(){
+    	ready_out = true;
+    	System.out.println("bag " + this.id + " is ready to be grabed out");
+    }
 	
 }

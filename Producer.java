@@ -7,7 +7,7 @@ import java.util.Random;
 public class Producer extends BaggageHandlingThread {
 
     // the maximum amount of time the consumer waits
-    protected final static int MAX_SLEEP = 3000;
+    protected final static int MAX_SLEEP = 6000;
 
     // the belt to which the producer puts the bags
     protected Belt belt;

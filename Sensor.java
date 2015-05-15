@@ -3,13 +3,13 @@
  * Which is located at segment 3 of the main belt
  * it detects the suspicious bags
  * */
+
+// Robot is also a form of baggage handling entities
 public class Sensor extends BaggageHandlingThread {
 	 // the belt to be handled
     protected Belt belt;
 
     // the amount of time it takes to check segment 3
-    // It has to be slightly smaller than belt moving time
-    // Which is 900
     protected final static int SENSE_TIME = 800;
 
     /**
@@ -21,7 +21,7 @@ public class Sensor extends BaggageHandlingThread {
     }
 
     /**
-     * 
+     * Check the bags according to the set interval
      */
     public void run() {
         while (!isInterrupted()) {
@@ -34,6 +34,6 @@ public class Sensor extends BaggageHandlingThread {
             }
         }
 
-        System.out.println("BeltSensor terminated");
+        System.out.println("Sensor terminated");
     }
 }

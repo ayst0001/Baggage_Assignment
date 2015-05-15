@@ -131,9 +131,8 @@ public class Belt {
     }
 
     /*
-     * Check the segment 3 if the bag there is suspicious
+     * Check the segment 3 make sure weather or not the bag there is suspicious
      */
-    
     public synchronized Bag sense() throws InterruptedException {
     	//When segment 3 is empty or the bag there is clean, wait
     	while (segment[2] == null ||
@@ -145,40 +144,57 @@ public class Belt {
     	//and bag on segment 3 is suspicious
     	if (segment[2] != null && segment[2].isSuspicious()){
     		System.out.println("bag "+ segment[2].getId()
-    				+ " on segment 3 is suspicious, "
+    				+ " is suspicious, "
     				+ "waiting to be moved");
     		segment[2].set_ready_out();
     	}
+    	
+    	// notify any waiting threads that the belt has changed
+    	notifyAll();
     	return segment[2];
     }
     
     /*
      * Robot grabs and moves suspicious bag out off segment[2]
      */
-    
     public synchronized Bag grab() throws InterruptedException {
     	//If there's nothing to be moved between the scanner and the belt
     	// or if the destination is occupied
     	while (nothing_to_grab() || cannot_grab()){
     		wait();
     	}
-    	//Double check, when segment 3 is not empty
-    	//and bag on segment 3 is ready to be moved
-    	if (segment[2] != null && segment[2].ready_out() && scanner == null){
+    	
+    	/* Double check, when segment 3 is not empty
+    	 * and bag on segment 3 is ready to be moved
+    	 * and scanner is available, move the bag to scanner
+    	*/
+    	if (segment[2] != null && segment[2].is_ready_out() && scanner == null){
+    		// move the bag to the scanner
     		grab_to_scanner();
+    		// notify any waiting threads that the belt has changed
+    		notifyAll();
     	}
     	
-    	else if (scanner != null && scanner.ready_back() && segment[2] == null){
+    	/* Double check, when scanner is not empty
+    	 * and bag in scanner is ready to be moved back
+    	 * and segment 3 is available, move the bag back to the belt
+    	*/
+    	else if (scanner != null && scanner.is_ready_back() && segment[2] == null){
     		grab_back();
+    		notifyAll();
     	}
     	return segment[2];
     }
     
-    /*
-     * Robot grabs and moves suspicious bag out off segment[2]
-     */
+    //To grab the scanned item back to the belt
+    private void grab_back() {
+    	System.out.println("Grabing back cleaned bag");
+		segment[2] = scanner;
+		scanner = null;
+		System.out.println("bag " + segment[2].getId() + " is moved back to segment 3");
+	}
     
-    // To move suspicious bags to the scanner
+	// To grab suspicious bags to the scanner
     private void grab_to_scanner() {
     	System.out.println("Grabing out suspicious bag");
 		scanner = segment[2];
@@ -186,12 +202,23 @@ public class Belt {
 		System.out.println("bag " + scanner.getId() + " is moved to scanner");
 	}
 
-	// To specify if there's anything need to be moved by the robot
+    //return true if scanner is occupied when bag at segment 3 is ready to be moved
+    //also return true if segment 3 is occupied when bag as scanner is ready to be moved
+	private boolean cannot_grab() {
+		if (segment[2] != null && (scanner != null && scanner.is_ready_back())){
+			if (scanner != null && (segment[2] != null && segment[2].is_ready_out())){
+				return true;
+			}
+			else return false;
+		}
+		else return false;
+	}
+
+	// return true if segment 3 is empty or the bag there is clean
+	// and the scanner is also empty or the bag there is still suspicious
     private boolean nothing_to_grab() {
-    	// if segment 3 is empty or not identified as suspicious
     	if (segment[2] == null ||
     			(segment[2]!=null && segment[2].not_ready_out())){
-    		// also if scanner is empty or have not been cleaned
     		if (scanner == null || (scanner != null && scanner.not_ready_back())){
     			return true;
     			}
@@ -200,24 +227,22 @@ public class Belt {
     	else return false;
 	}
 
+    //scan the bag and mark it as clean
 	public synchronized Bag scan() throws InterruptedException {
-    	//When scanner is null, wait
+    	//When scanner is null, or the bag in scanner is clean wait
     	while (scanner == null || (scanner != null && scanner.isClean())){
     		wait();
     	}
     	
-    	//Double check, when segment 3 is not empty
-    	//and bag on segment 3 is ready to be moved
+    	//Double check, when the bag in scanner is suspicious
+    	//mark it as clean
     	if (scanner != null && scanner.isSuspicious()){
-    		System.out.println("Start scanning bag");
+    		System.out.println("Start scanning bag " + scanner.getId());
     		scanner.clean();
     		System.out.println("bag " + scanner.getId() + " is cleaned");
-    		
     	}
     	return scanner;
     }
-    
-    
     
     /**
      * @return the maximum size of this belt
