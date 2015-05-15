@@ -33,7 +33,6 @@ public class Sensor extends BaggageHandlingThread {
                 this.interrupt();
             }
         }
-
         System.out.println("Sensor terminated");
     }
 }

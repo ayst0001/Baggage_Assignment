@@ -131,7 +131,8 @@ public class Belt {
     }
 
     /*
-     * Check the segment 3 make sure weather or not the bag there is suspicious
+     * Check the segment 3 make sure 
+     * wether or not the bag there is suspicious
      */
     public synchronized Bag sense() throws InterruptedException {
     	//When segment 3 is empty or the bag there is clean, wait
@@ -168,7 +169,9 @@ public class Belt {
     	 * and bag on segment 3 is ready to be moved
     	 * and scanner is available, move the bag to scanner
     	*/
-    	if (segment[2] != null && segment[2].is_ready_out() && scanner == null){
+    	if (segment[2] != null && 
+    		segment[2].is_ready_out() && 
+    		scanner == null){
     		// move the bag to the scanner
     		grab_to_scanner();
     		// notify any waiting threads that the belt has changed
@@ -179,7 +182,9 @@ public class Belt {
     	 * and bag in scanner is ready to be moved back
     	 * and segment 3 is available, move the bag back to the belt
     	*/
-    	else if (scanner != null && scanner.is_ready_back() && segment[2] == null){
+    	else if (scanner != null && 
+    			scanner.is_ready_back() && 
+    			segment[2] == null){
     		grab_back();
     		notifyAll();
     	}
@@ -191,7 +196,8 @@ public class Belt {
     	System.out.println("Grabing back cleaned bag");
 		segment[2] = scanner;
 		scanner = null;
-		System.out.println("bag " + segment[2].getId() + " is moved back to segment 3");
+		System.out.println("bag " + segment[2].getId() + 
+				" is moved back to segment 3");
 	}
     
 	// To grab suspicious bags to the scanner
@@ -199,14 +205,19 @@ public class Belt {
     	System.out.println("Grabing out suspicious bag");
 		scanner = segment[2];
 		segment[2] = null;
-		System.out.println("bag " + scanner.getId() + " is moved to scanner");
+		System.out.println("bag " + scanner.getId() + 
+				" is moved to scanner");
 	}
 
-    //return true if scanner is occupied when bag at segment 3 is ready to be moved
-    //also return true if segment 3 is occupied when bag as scanner is ready to be moved
+    /* Return true if scanner is occupied 
+     * when bag at segment 3 is ready to be moved
+     * Also return true if segment 3 is occupied
+     * when bag as scanner is ready to be moved*/
 	private boolean cannot_grab() {
-		if (segment[2] != null && (scanner != null && scanner.is_ready_back())){
-			if (scanner != null && (segment[2] != null && segment[2].is_ready_out())){
+		if (segment[2] != null && 
+				(scanner != null && scanner.is_ready_back())){
+			if (scanner != null && 
+				(segment[2] != null && segment[2].is_ready_out())){
 				return true;
 			}
 			else return false;
@@ -219,7 +230,8 @@ public class Belt {
     private boolean nothing_to_grab() {
     	if (segment[2] == null ||
     			(segment[2]!=null && segment[2].not_ready_out())){
-    		if (scanner == null || (scanner != null && scanner.not_ready_back())){
+    		if (scanner == null || 
+    				(scanner != null && scanner.not_ready_back())){
     			return true;
     			}
     		else return false;
@@ -230,7 +242,8 @@ public class Belt {
     //scan the bag and mark it as clean
 	public synchronized Bag scan() throws InterruptedException {
     	//When scanner is null, or the bag in scanner is clean wait
-    	while (scanner == null || (scanner != null && scanner.isClean())){
+    	while (scanner == null || 
+    			(scanner != null && scanner.isClean())){
     		wait();
     	}
     	
