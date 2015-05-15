@@ -13,6 +13,7 @@ public class Sim {
         Producer producer = new Producer(belt);
         Consumer consumer = new Consumer(belt);
         BeltMover mover = new BeltMover(belt);
+        ShortBeltMover shortmover = new ShortBeltMover(belt);
         Sensor sensor = new Sensor(belt);
         Robot robot = new Robot(belt);
         Scanner scanner = new Scanner(belt);
@@ -20,16 +21,19 @@ public class Sim {
         consumer.start();
         producer.start();
         mover.start();
+        shortmover.start();
         sensor.start();
         robot.start();
         scanner.start();
+        
 
         while (consumer.isAlive() && 
                producer.isAlive() && 
                mover.isAlive() &&
                sensor.isAlive() &&
                robot.isAlive() &&
-               scanner.isAlive())
+               scanner.isAlive() &&
+               shortmover.isAlive())
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
@@ -40,6 +44,7 @@ public class Sim {
         consumer.interrupt();
         producer.interrupt();
         mover.interrupt();
+        shortmover.interrupt();
         sensor.interrupt();
         robot.interrupt();
         scanner.interrupt();

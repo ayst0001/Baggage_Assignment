@@ -4,7 +4,7 @@
  * it detects the suspicious bags
  * */
 
-// Robot is also a form of baggage handling entities
+// Sensor is also a form of baggage handling entities
 public class Sensor extends BaggageHandlingThread {
 	 // the belt to be handled
     protected Belt belt;
