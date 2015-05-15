@@ -1,6 +1,5 @@
 /*
- * A shortbeltmover moves a belt along as often as possible, but only
- * when there is a bag on the belt not at the last position.
+ * A shortbeltmover moves the short belt along as often as possible
  */
 
 // ShortBeltMover is also a form of baggage handling entities

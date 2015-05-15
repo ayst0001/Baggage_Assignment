@@ -1,7 +1,8 @@
 /*
  * This is the class for the robot
  * Which moves suspicious bags between segment 3 and scanner
- * 
+ * When a short belt is working, the robot only move bags
+ * one way, from the main belt to scanner
  * */
 
 // Robot is also a form of baggage handling entities

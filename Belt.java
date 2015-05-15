@@ -69,7 +69,7 @@ public class Belt {
     }
 
     /**
-     * Take a bag off the end of the belt
+     * Take a bag off the end of both belts
      * 
      * @return the removed bag
      * @throws InterruptedException
@@ -78,43 +78,57 @@ public class Belt {
     public synchronized Bag getEndBelt() throws InterruptedException {
 
         Bag bag;
+        // Don't move if the end of both belts are empty
         while (segment[segment.length-1] == null &&
         		extrasegment_2 == null) {
             wait();
         }
 
+        // Take the bag from main belt if needed
         if (segment[segment.length-1] != null){
+        	
         	bag = segment[segment.length-1];
             segment[segment.length-1] = null;
-            
+            // Output notifications
             System.out.print(indentation);
             	if (!bag.isClean()) {
-            		System.out.println(bag.getId() + " departed -- unclean!!!");
+            		System.out.println(bag.getId() + 
+            				" departed from main belt -- unclean!!!");
             		} 
             	else {
-                System.out.println(bag.getId() + " departed from main belt");
+                System.out.println(bag.getId() + 
+                		" departed from main belt");
             }
+            	 // notify any waiting threads that the belt has changed
+            	notifyAll();
+            	return segment[segment.length-1];
         }
         
-        else if (extrasegment_2 != null){
+        //Take the bag from the short belt if needed
+        else {
+        	
         	bag = extrasegment_2;
             extrasegment_2 = null;
-            
+            // Output notifications
             System.out.print(indentation);
             	if (!bag.isClean()) {
-            		System.out.println(bag.getId() + " departed -- unclean!!!");
+            		System.out.println(bag.getId() + 
+            				" departed from short belt-- unclean!!!");
             		} 
             	else {
-                System.out.println(bag.getId() + " departed from short belt");
+                System.out.println(bag.getId() + 
+                		" departed from short belt");
             }
+            	 // notify any waiting threads that the belt has changed
+            	notifyAll();
+            	return extrasegment_2;
         }
-        	 
-        // notify any waiting threads that the belt has changed
-        notifyAll();
-        return segment[segment.length-1];
+        
     }
 
-    /**
+ 
+
+	/**
      * Move the belt along one segment
      * 
      * @throws OverloadException
@@ -124,8 +138,10 @@ public class Belt {
      */
     public synchronized void move() 
             throws InterruptedException, OverloadException {
-    	// if there is something at the end of the belt, or the belt is empty,
-        // or something needs to be picked up for a scan, do not move the belt
+    	/* If there is something at the end of the belt
+    	 * or the belt is empty
+    	 * or something needs to be picked up for a scan
+    	 * do not move the belt*/
         while (isEmpty() || segment[segment.length-1] != null ||
         		(segment[2] != null && segment[2].isSuspicious()) ) {
             wait();
@@ -162,7 +178,7 @@ public class Belt {
     	//Double check, when segment 3 is not empty
     	//and bag on segment 3 is suspicious
     	if (segment[2] != null && segment[2].isSuspicious()){
-    		System.out.println("bag "+ segment[2].getId()
+    		System.out.println("(sensor)bag "+ segment[2].getId()
     				+ " is suspicious, "
     				+ "waiting to be moved");
     		segment[2].set_ready_out();
@@ -225,10 +241,10 @@ public class Belt {
     
 	// To grab suspicious bags to the scanner
     private void grab_to_scanner() {
-    	System.out.println("Grabing out suspicious bag");
+    	System.out.println("(robot)Grabing out suspicious bag");
 		scanner = segment[2];
 		segment[2] = null;
-		System.out.println("bag " + scanner.getId() + 
+		System.out.println("(robot)bag " + scanner.getId() + 
 				" is moved to scanner");
 	}
 
@@ -273,9 +289,11 @@ public class Belt {
     	//Double check, when the bag in scanner is suspicious
     	//mark it as clean
     	if (scanner != null && scanner.isSuspicious()){
-    		System.out.println("Start scanning bag " + scanner.getId());
+    		System.out.println("(scanner)Start scanning bag " + 
+    				scanner.getId());
     		scanner.clean();
-    		System.out.println("bag " + scanner.getId() + " is cleaned");
+    		System.out.println("(scanner)bag " + scanner.getId() + 
+    				" is cleaned, ready to be moved out");
     	}
     	return scanner;
     }
@@ -297,13 +315,18 @@ public class Belt {
     			extrasegment_2 = extrasegment_1;
     			extrasegment_1 = scanner;
     			scanner = null;
+    			
+    			/* notification for testing
     			System.out.println("shortbelt moved");
     			if(extrasegment_1 != null){
-    				System.out.println("extra_1: " + extrasegment_1.getId());
+    				System.out.println("extra_1: " + 
+    				extrasegment_1.getId());
     			}
     			else if(extrasegment_2 != null){
-    				System.out.println("extra_2: " + extrasegment_2.getId());
+    				System.out.println("extra_2: " + 
+    				extrasegment_2.getId());
     			};
+    			*/
     	}
     	notifyAll();
     	return scanner;

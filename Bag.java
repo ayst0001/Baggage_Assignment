@@ -54,9 +54,11 @@ public class Bag {
         clean = true;
         suspicious = false;
         // prevent the bag to be scanned again
-        set_not_ready_out();
+        // not needed when the short is working 
+        	// set_not_ready_out();
         // specify the bag is checked and clean
-        set_ready_back();
+        // not needed when the short belt is working
+        	// set_ready_back();
     }
 
     /**
@@ -114,9 +116,11 @@ public class Bag {
 
 	// specify the bag is checked and clean
 	// and ready to be moved back
+	// not needed when a shout belt is working
 	public void set_ready_back() {
     	ready_back = true;
-    	System.out.println("bag " + this.id + " is ready to be grabed back");
+    	System.out.println("bag " + this.id + 
+    			" is ready to be grabed back");
 	}
 
 	// specify the bag should not be moved by the robot
@@ -128,7 +132,5 @@ public class Bag {
 	// set the bag as "ready out" when it is detected by the sensor
     public void set_ready_out(){
     	ready_out = true;
-    	System.out.println("bag " + this.id + " is ready to be grabed out");
     }
-	
 }
